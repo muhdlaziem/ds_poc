@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:cryptography/cryptography.dart';
+import 'package:crypto/crypto.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,6 +63,44 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  Future<void> cryp() async {
+    final algo = Ed25519();
+
+    final keyPair = await algo.newKeyPair();
+    final publicKye = await keyPair.extractPublicKey();
+    final privateKey = await keyPair.extractPrivateKeyBytes();
+
+    final encodedPublicKey = base64Encode(publicKye.bytes);
+    final encodedPrivateKey = base64Encode(privateKey);
+
+    // sink.add(publicKye.bytes);
+    // sink.close();
+    // final hash = sha256.convert(publicKye.bytes);
+    // log("encodedPublicKey: $encodedPublicKey | encodedPrivateKey: $encodedPrivateKey");
+    // final signed = await algo.signString(
+    //     "Z1EhZ45r4eRTUiLpJ/8vEhbncJRNDGqhGHZPP6lUG0",
+    //     keyPair: keyPair);
+    // final encodedSignature = base64Encode(signed.bytes);
+    // log(encodedSignature);
+
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    log("model: ${androidInfo.model}, id: ${androidInfo.id}");
+    final publicKey = SimplePublicKey(
+        base64Decode("kvtIPK3Ze8Dzsv9y1R1vAgASaiOPEPTQ0fojai2RTyE="),
+        type: KeyPairType.ed25519);
+    final extractedKeyPair = SimpleKeyPairData(
+        base64Decode("dAIS9CkCRn3Hl3bufgdDyDGV18iQ6hMCatQwhEPHwrc="),
+        publicKey: publicKey,
+        type: KeyPairType.ed25519);
+
+    final signed = await algo.signString(
+        "gzb1Yo/ROrKe3Fyr3/mwtF7MM3Pd7GixFX29hTFCNEY=",
+        keyPair: extractedKeyPair);
+
+    log("signature: ${base64Encode(signed.bytes)}");
+  }
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -65,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      cryp();
     });
   }
 
