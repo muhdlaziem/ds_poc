@@ -1,4 +1,4 @@
-package com.example.asym_poc
+package com.example.ds_poc
 
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterFragmentActivity

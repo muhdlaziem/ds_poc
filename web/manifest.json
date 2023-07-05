@@ -1,6 +1,6 @@
 {
-    "name": "asym_poc",
-    "short_name": "asym_poc",
+    "name": "ds_poc",
+    "short_name": "ds_poc",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
