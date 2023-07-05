@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:biometric_storage/biometric_storage.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cryptography/cryptography.dart';
@@ -95,10 +96,25 @@ class _MyHomePageState extends State<MyHomePage> {
         type: KeyPairType.ed25519);
 
     final signed = await algo.signString(
-        "gzb1Yo/ROrKe3Fyr3/mwtF7MM3Pd7GixFX29hTFCNEY=",
+        "4eEmlpDU12fTuYtd/gRzknBUcafm+TolSnecMgxxUrU=",
         keyPair: extractedKeyPair);
 
     log("signature: ${base64Encode(signed.bytes)}");
+    final response = await BiometricStorage().canAuthenticate();
+
+    if (response != CanAuthenticateResponse.success) {
+      // panic..
+      log("Panic");
+    } else {
+      final store = await BiometricStorage().getStorage('test',
+          options: StorageFileInitOptions(
+              androidBiometricOnly: true,
+              authenticationRequired: true,
+              authenticationValidityDurationSeconds: -1));
+      // final hi = await store.write("content");
+      final hi2 = await store.read();
+      log("hi2 : $hi2");
+    }
   }
 
   void _incrementCounter() {
